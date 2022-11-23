@@ -55,10 +55,11 @@
     url: new RegExp('^([^/:]+:)//(?:([^/:@]+):?([^/:@]+)?@)?([^/:]+)(?::(\\d+))?(/[^\\?#]*)(\\?[^#]*)?(#[.]*)?$')
   };
   var URL = function () {
-    function URL(url) {
+    function URL(url, base) {
       _classCallCheck(this, URL);
+      if (base) url = URL.resolve(url, base) || '';
       var matches = regexs.url.exec(url);
-      if (!matches) throw new Error('bad URL format');
+      if (!matches) throw new Error("Failed to construct 'URL': Invalid URL");
       this.href = matches[0] || '';
       this.protocol = matches[1] || '';
       this.username = matches[2] || '';
@@ -81,6 +82,22 @@
       key: "toJSON",
       value: function toJSON() {
         return this.toString();
+      }
+    }], [{
+      key: "resolve",
+      value: function resolve(url, base) {
+        var baseURL;
+        try {
+          new URL(url);
+          return url;
+        } catch (e) {}
+        try {
+          baseURL = new URL(base);
+        } catch (e) {
+          return null;
+        }
+
+        if (!url) return base;else if (url.substring(0, 2) === '//') return "".concat(baseURL.protocol).concat(url);else if (url.substring(0, 1) === '/') return "".concat(baseURL.protocol, "//").concat(baseURL.username ? baseURL.password ? "".concat(baseURL.username, ":").concat(baseURL.password, "@") : "".concat(baseURL.username, "@") : '').concat(baseURL.host).concat(url);else return "".concat(baseURL.protocol, "//").concat(baseURL.username ? baseURL.password ? "".concat(baseURL.username, ":").concat(baseURL.password, "@") : "".concat(baseURL.username, "@") : '').concat(baseURL.host).concat(baseURL.pathname.replace(/[^\/]+$/, '')).concat(url);
       }
     }]);
     return URL;

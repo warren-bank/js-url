@@ -3,10 +3,12 @@ const regexs = {
 }
 
 class URL {
-  constructor(url) {
-    const matches = regexs.url.exec(url)
+  constructor(url, base) {
+    if (base)
+      url = URL.resolve(url, base) || ''
 
-    if (!matches) throw new Error('bad URL format')
+    const matches = regexs.url.exec(url)
+    if (!matches) throw new Error("Failed to construct 'URL': Invalid URL")
 
     this.href         = matches[0] || ''
     this.protocol     = matches[1] || ''
@@ -20,6 +22,40 @@ class URL {
     this.search       = matches[7] || ''
     this.hash         = matches[8] || ''
     this.searchParams = new URLSearchParams(this.search)
+  }
+
+  static resolve(url, base) {
+    let baseURL
+
+    try {
+      new URL(url)
+      // url is valid
+      return url
+    }
+    catch(e) {}
+
+    try {
+      baseURL = new URL(base)
+    }
+    catch(e) {
+      // base is not valid
+      return null
+    }
+
+    // url is not absolute, base is valid:
+    // resolve url relative to base
+
+    if (!url)
+      return base
+
+    else if (url.substring(0, 2) === '//')
+      return `${baseURL.protocol}${url}`
+
+    else if (url.substring(0, 1) === '/')
+      return `${baseURL.protocol}//${baseURL.username ? (baseURL.password ? `${baseURL.username}:${baseURL.password}@` : `${baseURL.username}@`) : ''}${baseURL.host}${url}`
+
+    else
+      return `${baseURL.protocol}//${baseURL.username ? (baseURL.password ? `${baseURL.username}:${baseURL.password}@` : `${baseURL.username}@`) : ''}${baseURL.host}${baseURL.pathname.replace(/[^\/]+$/, '')}${url}`
   }
 
   toString() {

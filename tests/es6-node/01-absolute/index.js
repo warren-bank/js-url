@@ -1,4 +1,4 @@
-const {URL} = require('../../es6-node/jsURL')
+const {URL} = require('../../../es6-node/jsURL')
 
 {
   const gh = new URL('https://github.com/warren-bank')
