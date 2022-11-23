@@ -1,0 +1,18 @@
+<html>
+<head>
+  <script src="../../es5-browser/jsURL.js"></script>
+  <script>
+    {
+      // temporarily override global URL class with external implementation within scope of block
+      const URL = window.jsURL
+
+      const gh = new URL('https://github.com/warren-bank')
+      const qs = gh.searchParams
+
+      qs.set('tab', 'repositories')
+
+      window.alert(gh.toString())
+    }
+  </script>
+</head>
+</html>

@@ -1,0 +1,39 @@
+{
+  "name": "@warren-bank/url",
+  "version": "1.0.0",
+  "main": "es6-node/jsURL.js",
+  "browser": "es5-browser/jsURL.js",
+  "description": "URL class library that does not perform any encoding or decoding",
+  "license": "GPL-2.0",
+  "author": {
+    "name": "Warren R. Bank",
+    "email": "warren.r.bank@gmail.com",
+    "url": "https://github.com/warren-bank"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/warren-bank/js-url"
+  },
+  "devDependencies": {
+    "@babel/cli": "*",
+    "@babel/core": "*",
+    "@babel/preset-env": "*",
+    "babel-plugin-iife-wrap": "*"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ],
+    "plugins": [
+      "iife-wrap"
+    ]
+  },
+  "scripts": {
+    "build": "babel es6-node/jsURL.js --out-file es5-browser/jsURL.js --no-comments --source-maps"
+  },
+  "keywords": [
+    "URL",
+    "URLSearchParams",
+    "searchParams"
+  ]
+}
