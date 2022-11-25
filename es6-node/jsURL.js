@@ -4,6 +4,8 @@ const regexs = {
 }
 
 class URL {
+  #_searchParams = ''
+
   constructor(url, base) {
     if (base)
       url = URL.resolve(url, base) || ''
@@ -95,16 +97,16 @@ class URL {
   }
 
   get search() {
-    return this._searchParams.toString()
+    return this.#_searchParams.toString()
   }
 
   set search(search) {
-    this._searchParams = new URLSearchParams(search)
+    this.#_searchParams = new URLSearchParams(search)
   }
 
   // read-only
   get searchParams() {
-    return this._searchParams
+    return this.#_searchParams
   }
 }
 
