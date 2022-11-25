@@ -111,8 +111,10 @@ class URL {
 }
 
 class URLSearchParams {
+  #_map = {}
+
   constructor(search) {
-    this.map = {}
+    this.#_map = {}
 
     if (search && (search[0] === '?'))
       search = search.substring(1)
@@ -126,64 +128,64 @@ class URLSearchParams {
           const key = pair.substring(0, index)
           const val = (index + 1 < pair.length) ? pair.substring(index + 1) : ''
 
-          if (!this.map[key])
-            this.map[key] = []
+          if (!this.#_map[key])
+            this.#_map[key] = []
 
-          this.map[key].push(val)
+          this.#_map[key].push(val)
         }
       })
     }
   }
 
   has(key) {
-    return !!this.map[key]
+    return !!this.#_map[key]
   }
 
   get(key) {
-    return this.map[key] ? this.map[key][0] : null
+    return this.#_map[key] ? this.#_map[key][0] : null
   }
 
   getAll(key) {
-    return this.map[key] ? [...this.map[key]] : []
+    return this.#_map[key] ? [...this.#_map[key]] : []
   }
 
   set(key, val) {
-    this.map[key] = [val]
+    this.#_map[key] = [val]
   }
 
   append(key, val) {
-    if (!this.map[key])
-      this.map[key] = []
+    if (!this.#_map[key])
+      this.#_map[key] = []
 
-    this.map[key].push(val)
+    this.#_map[key].push(val)
   }
 
   delete(key, val) {
-    if (!this.map[key]) return
+    if (!this.#_map[key]) return
 
     if (val) {
-      const index = this.map[key].indexOf(val)
+      const index = this.#_map[key].indexOf(val)
       if (index >= 0) {
-        this.map[key].splice(index, 1)
+        this.#_map[key].splice(index, 1)
 
-        if (!this.map[key].length)
-          delete this.map[key]
+        if (!this.#_map[key].length)
+          delete this.#_map[key]
       }
     }
     else {
-      delete this.map[key]
+      delete this.#_map[key]
     }
   }
 
   keys() {
-    return Object.keys(this.map)
+    return Object.keys(this.#_map)
   }
 
   toString(exclude_question_mark) {
     let search = ''
     const keys = this.keys()
     keys.forEach(key => {
-      const vals = this.map[key]
+      const vals = this.#_map[key]
       vals.forEach(val => {
         let prefix = search ? '&' : exclude_question_mark ? '' : '?'
         search += `${prefix}${key}=${val}`

@@ -185,11 +185,16 @@
     }]);
     return URL;
   }();
+  var _map = new WeakMap();
   var URLSearchParams = function () {
     function URLSearchParams(search) {
       var _this = this;
       _classCallCheck(this, URLSearchParams);
-      this.map = {};
+      _classPrivateFieldInitSpec(this, _map, {
+        writable: true,
+        value: {}
+      });
+      _classPrivateFieldSet(this, _map, {});
       if (search && search[0] === '?') search = search.substring(1);
       if (search) {
         var pairs = search.split('&');
@@ -198,8 +203,8 @@
           if (index > 0) {
             var key = pair.substring(0, index);
             var val = index + 1 < pair.length ? pair.substring(index + 1) : '';
-            if (!_this.map[key]) _this.map[key] = [];
-            _this.map[key].push(val);
+            if (!_classPrivateFieldGet(_this, _map)[key]) _classPrivateFieldGet(_this, _map)[key] = [];
+            _classPrivateFieldGet(_this, _map)[key].push(val);
           }
         });
       }
@@ -207,47 +212,47 @@
     _createClass(URLSearchParams, [{
       key: "has",
       value: function has(key) {
-        return !!this.map[key];
+        return !!_classPrivateFieldGet(this, _map)[key];
       }
     }, {
       key: "get",
       value: function get(key) {
-        return this.map[key] ? this.map[key][0] : null;
+        return _classPrivateFieldGet(this, _map)[key] ? _classPrivateFieldGet(this, _map)[key][0] : null;
       }
     }, {
       key: "getAll",
       value: function getAll(key) {
-        return this.map[key] ? _toConsumableArray(this.map[key]) : [];
+        return _classPrivateFieldGet(this, _map)[key] ? _toConsumableArray(_classPrivateFieldGet(this, _map)[key]) : [];
       }
     }, {
       key: "set",
       value: function set(key, val) {
-        this.map[key] = [val];
+        _classPrivateFieldGet(this, _map)[key] = [val];
       }
     }, {
       key: "append",
       value: function append(key, val) {
-        if (!this.map[key]) this.map[key] = [];
-        this.map[key].push(val);
+        if (!_classPrivateFieldGet(this, _map)[key]) _classPrivateFieldGet(this, _map)[key] = [];
+        _classPrivateFieldGet(this, _map)[key].push(val);
       }
     }, {
       key: "delete",
       value: function _delete(key, val) {
-        if (!this.map[key]) return;
+        if (!_classPrivateFieldGet(this, _map)[key]) return;
         if (val) {
-          var index = this.map[key].indexOf(val);
+          var index = _classPrivateFieldGet(this, _map)[key].indexOf(val);
           if (index >= 0) {
-            this.map[key].splice(index, 1);
-            if (!this.map[key].length) delete this.map[key];
+            _classPrivateFieldGet(this, _map)[key].splice(index, 1);
+            if (!_classPrivateFieldGet(this, _map)[key].length) delete _classPrivateFieldGet(this, _map)[key];
           }
         } else {
-          delete this.map[key];
+          delete _classPrivateFieldGet(this, _map)[key];
         }
       }
     }, {
       key: "keys",
       value: function keys() {
-        return Object.keys(this.map);
+        return Object.keys(_classPrivateFieldGet(this, _map));
       }
     }, {
       key: "toString",
@@ -256,7 +261,7 @@
         var search = '';
         var keys = this.keys();
         keys.forEach(function (key) {
-          var vals = _this2.map[key];
+          var vals = _classPrivateFieldGet(_this2, _map)[key];
           vals.forEach(function (val) {
             var prefix = search ? '&' : exclude_question_mark ? '' : '?';
             search += "".concat(prefix).concat(key, "=").concat(val);
