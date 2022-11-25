@@ -1,6 +1,6 @@
 {
   "name": "@warren-bank/url",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "main": "es6-node/jsURL.js",
   "browser": "es5-browser/jsURL.js",
   "description": "URL class library that does not perform any encoding or decoding",
