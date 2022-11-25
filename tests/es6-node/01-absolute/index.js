@@ -6,5 +6,5 @@ const {URL} = require('../../../es6-node/jsURL')
 
   qs.set('tab', 'repositories')
 
-  console.log(gh.toString())
+  console.log(gh.href)
 }

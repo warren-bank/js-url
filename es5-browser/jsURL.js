@@ -52,36 +52,74 @@
     return Constructor;
   }
   var regexs = {
-    url: new RegExp('^([^/:]+:)//(?:([^/:@]+):?([^/:@]+)?@)?([^/:]+)(?::(\\d+))?(/[^\\?#]*)(\\?[^#]*)?(#.*)?$')
+    url: new RegExp('^([^/:]+:)//(?:([^/:@]+):?([^/:@]+)?@)?([^/:]+)(?::(\\d+))?(/[^\\?#]*)(\\?[^#]*)?(#.*)?$'),
+    host: /^([^:]+)(?::(\d+))?$/
   };
   var URL = function () {
     function URL(url, base) {
       _classCallCheck(this, URL);
       if (base) url = URL.resolve(url, base) || '';
-      var matches = regexs.url.exec(url);
-      if (!matches) throw new Error("Failed to construct 'URL': Invalid URL");
-      this.href = matches[0] || '';
-      this.protocol = matches[1] || '';
-      this.username = matches[2] || '';
-      this.password = matches[3] || '';
-      this.hostname = matches[4] || '';
-      this.port = matches[5] || '';
-      this.host = this.port ? "".concat(this.hostname, ":").concat(this.port) : this.hostname;
-      this.origin = "".concat(this.protocol, "//").concat(this.host);
-      this.pathname = matches[6] || '';
-      this.search = matches[7] || '';
-      this.hash = matches[8] || '';
-      this.searchParams = new URLSearchParams(this.search);
+      this.href = url;
     }
     _createClass(URL, [{
       key: "toString",
       value: function toString() {
-        return "".concat(this.protocol, "//").concat(this.username ? this.password ? "".concat(this.username, ":").concat(this.password, "@") : "".concat(this.username, "@") : '').concat(this.host).concat(this.pathname).concat(this.searchParams.toString()).concat(this.hash);
+        return "".concat(this.protocol, "//").concat(this.username ? this.password ? "".concat(this.username, ":").concat(this.password, "@") : "".concat(this.username, "@") : '').concat(this.host).concat(this.pathname).concat(this.search).concat(this.hash);
       }
     }, {
       key: "toJSON",
       value: function toJSON() {
         return this.toString();
+      }
+    }, {
+      key: "href",
+      get: function get() {
+        return this.toString();
+      },
+      set: function set(url) {
+        var matches = regexs.url.exec(url);
+        if (!matches) throw new Error("Failed to construct 'URL': Invalid URL");
+        this.protocol = matches[1] || '';
+        this.username = matches[2] || '';
+        this.password = matches[3] || '';
+        this.hostname = matches[4] || '';
+        this.port = matches[5] || '';
+        this.pathname = matches[6] || '';
+        this.search = matches[7] || '';
+        this.hash = matches[8] || '';
+      }
+    }, {
+      key: "host",
+      get: function get() {
+        return this.port ? "".concat(this.hostname, ":").concat(this.port) : this.hostname;
+      },
+      set: function set(host) {
+        var matches = regexs.host.exec(host);
+        if (!matches) throw new Error("Failed to update 'URL': Invalid host");
+        this.hostname = matches[1] || '';
+        this.port = matches[2] || '';
+      }
+
+    }, {
+      key: "origin",
+      get:
+      function get() {
+        return "".concat(this.protocol, "//").concat(this.host);
+      }
+    }, {
+      key: "search",
+      get: function get() {
+        return this._searchParams.toString();
+      },
+      set: function set(search) {
+        this._searchParams = new URLSearchParams(search);
+      }
+
+    }, {
+      key: "searchParams",
+      get:
+      function get() {
+        return this._searchParams;
       }
     }], [{
       key: "resolve",
@@ -97,7 +135,7 @@
           return null;
         }
 
-        if (!url) return base;else if (url.substring(0, 2) === '//') return "".concat(baseURL.protocol).concat(url);else if (url.substring(0, 1) === '/') return "".concat(baseURL.protocol, "//").concat(baseURL.username ? baseURL.password ? "".concat(baseURL.username, ":").concat(baseURL.password, "@") : "".concat(baseURL.username, "@") : '').concat(baseURL.host).concat(url);else if (url.substring(0, 1) === '?') return "".concat(baseURL.protocol, "//").concat(baseURL.username ? baseURL.password ? "".concat(baseURL.username, ":").concat(baseURL.password, "@") : "".concat(baseURL.username, "@") : '').concat(baseURL.host).concat(baseURL.pathname).concat(url);else if (url.substring(0, 1) === '#') return "".concat(baseURL.protocol, "//").concat(baseURL.username ? baseURL.password ? "".concat(baseURL.username, ":").concat(baseURL.password, "@") : "".concat(baseURL.username, "@") : '').concat(baseURL.host).concat(baseURL.pathname).concat(baseURL.searchParams.toString()).concat(url);else return "".concat(baseURL.protocol, "//").concat(baseURL.username ? baseURL.password ? "".concat(baseURL.username, ":").concat(baseURL.password, "@") : "".concat(baseURL.username, "@") : '').concat(baseURL.host).concat(baseURL.pathname.replace(/[^\/]+$/, '')).concat(url);
+        if (!url) return base;else if (url.substring(0, 2) === '//') return "".concat(baseURL.protocol).concat(url);else if (url.substring(0, 1) === '/') return "".concat(baseURL.protocol, "//").concat(baseURL.username ? baseURL.password ? "".concat(baseURL.username, ":").concat(baseURL.password, "@") : "".concat(baseURL.username, "@") : '').concat(baseURL.host).concat(url);else if (url.substring(0, 1) === '?') return "".concat(baseURL.protocol, "//").concat(baseURL.username ? baseURL.password ? "".concat(baseURL.username, ":").concat(baseURL.password, "@") : "".concat(baseURL.username, "@") : '').concat(baseURL.host).concat(baseURL.pathname).concat(url);else if (url.substring(0, 1) === '#') return "".concat(baseURL.protocol, "//").concat(baseURL.username ? baseURL.password ? "".concat(baseURL.username, ":").concat(baseURL.password, "@") : "".concat(baseURL.username, "@") : '').concat(baseURL.host).concat(baseURL.pathname).concat(baseURL.search).concat(url);else return "".concat(baseURL.protocol, "//").concat(baseURL.username ? baseURL.password ? "".concat(baseURL.username, ":").concat(baseURL.password, "@") : "".concat(baseURL.username, "@") : '').concat(baseURL.host).concat(baseURL.pathname.replace(/[^\/]+$/, '')).concat(url);
       }
     }]);
     return URL;

@@ -1,5 +1,6 @@
 const regexs = {
-  url: new RegExp('^([^/:]+:)//(?:([^/:@]+):?([^/:@]+)?@)?([^/:]+)(?::(\\d+))?(/[^\\?#]*)(\\?[^#]*)?(#.*)?$')
+  url:  new RegExp('^([^/:]+:)//(?:([^/:@]+):?([^/:@]+)?@)?([^/:]+)(?::(\\d+))?(/[^\\?#]*)(\\?[^#]*)?(#.*)?$'),
+  host: /^([^:]+)(?::(\d+))?$/
 }
 
 class URL {
@@ -7,21 +8,7 @@ class URL {
     if (base)
       url = URL.resolve(url, base) || ''
 
-    const matches = regexs.url.exec(url)
-    if (!matches) throw new Error("Failed to construct 'URL': Invalid URL")
-
-    this.href         = matches[0] || ''
-    this.protocol     = matches[1] || ''
-    this.username     = matches[2] || ''
-    this.password     = matches[3] || ''
-    this.hostname     = matches[4] || ''
-    this.port         = matches[5] || ''
-    this.host         = this.port ? `${this.hostname}:${this.port}` : this.hostname
-    this.origin       = `${this.protocol}//${this.host}`
-    this.pathname     = matches[6] || ''
-    this.search       = matches[7] || ''
-    this.hash         = matches[8] || ''
-    this.searchParams = new URLSearchParams(this.search)
+    this.href = url
   }
 
   static resolve(url, base) {
@@ -58,18 +45,66 @@ class URL {
       return `${baseURL.protocol}//${baseURL.username ? (baseURL.password ? `${baseURL.username}:${baseURL.password}@` : `${baseURL.username}@`) : ''}${baseURL.host}${baseURL.pathname}${url}`
 
     else if (url.substring(0, 1) === '#')
-      return `${baseURL.protocol}//${baseURL.username ? (baseURL.password ? `${baseURL.username}:${baseURL.password}@` : `${baseURL.username}@`) : ''}${baseURL.host}${baseURL.pathname}${baseURL.searchParams.toString()}${url}`
+      return `${baseURL.protocol}//${baseURL.username ? (baseURL.password ? `${baseURL.username}:${baseURL.password}@` : `${baseURL.username}@`) : ''}${baseURL.host}${baseURL.pathname}${baseURL.search}${url}`
 
     else
       return `${baseURL.protocol}//${baseURL.username ? (baseURL.password ? `${baseURL.username}:${baseURL.password}@` : `${baseURL.username}@`) : ''}${baseURL.host}${baseURL.pathname.replace(/[^\/]+$/, '')}${url}`
   }
 
   toString() {
-    return `${this.protocol}//${this.username ? (this.password ? `${this.username}:${this.password}@` : `${this.username}@`) : ''}${this.host}${this.pathname}${this.searchParams.toString()}${this.hash}`
+    return `${this.protocol}//${this.username ? (this.password ? `${this.username}:${this.password}@` : `${this.username}@`) : ''}${this.host}${this.pathname}${this.search}${this.hash}`
   }
 
   toJSON() {
     return this.toString()
+  }
+
+  get href() {
+    return this.toString()
+  }
+
+  set href(url) {
+    const matches = regexs.url.exec(url)
+    if (!matches) throw new Error("Failed to construct 'URL': Invalid URL")
+
+    this.protocol     = matches[1] || ''
+    this.username     = matches[2] || ''
+    this.password     = matches[3] || ''
+    this.hostname     = matches[4] || ''
+    this.port         = matches[5] || ''
+    this.pathname     = matches[6] || ''
+    this.search       = matches[7] || ''
+    this.hash         = matches[8] || ''
+  }
+
+  get host() {
+    return this.port ? `${this.hostname}:${this.port}` : this.hostname
+  }
+
+  set host(host) {
+    const matches = regexs.host.exec(host)
+    if (!matches) throw new Error("Failed to update 'URL': Invalid host")
+
+    this.hostname     = matches[1] || ''
+    this.port         = matches[2] || ''
+  }
+
+  // read-only
+  get origin() {
+    return `${this.protocol}//${this.host}`
+  }
+
+  get search() {
+    return this._searchParams.toString()
+  }
+
+  set search(search) {
+    this._searchParams = new URLSearchParams(search)
+  }
+
+  // read-only
+  get searchParams() {
+    return this._searchParams
   }
 }
 

@@ -1,4 +1,4 @@
-const {URL, URLSearchParams} = require('../../../es6-node/jsURL')
+const {URL}  = require('../../../es6-node/jsURL')
 const assert = require('assert/strict')
 
 let errors_counter = 0
@@ -10,8 +10,8 @@ const test = (url_1, base, expected) => {
     const URL_1 = new URL(url_1, base)
     const URL_2 = new URL(url_2)
 
-    assert.equal(url_2, URL_1.toString())
-    assert.equal(url_2, URL_2.toString())
+    assert.equal(url_2, URL_1.href)
+    assert.equal(url_2, URL_2.href)
 
     if (!base)
       assert.equal(url_1, url_2)
@@ -22,7 +22,7 @@ const test = (url_1, base, expected) => {
       )
 
     if (expected)
-      assert.equal(expected, URL_1.toString())
+      assert.equal(expected, URL_1.href)
   }
   catch(e) {
     console.log(`FAIL: ${JSON.stringify({url: url_1, base}, null, 2)}`)
@@ -70,12 +70,12 @@ test('http://myusername:mypassword@www.example.com:8080/path/to/myfile?a=1&b=2&c
   let val, expectedURL
 
   val = '?x=1&y=2&z[]=3&z[]=4'
-  expectedURL = get_baseURL(); expectedURL.hash = ''; expectedURL.search = val; expectedURL.searchParams = new URLSearchParams(val);
-  test_rel(val, expectedURL.toString())
+  expectedURL = get_baseURL(); expectedURL.hash = ''; expectedURL.search = val;
+  test_rel(val, expectedURL.href)
 
   val = '#hash2'
   expectedURL = get_baseURL(); expectedURL.hash = val;
-  test_rel(val, expectedURL.toString())
+  test_rel(val, expectedURL.href)
 }
 
 if (!errors_counter)

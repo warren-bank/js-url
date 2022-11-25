@@ -20,7 +20,7 @@ Further reading: [1](https://stackoverflow.com/questions/45516070)
 
       qs.set('tab', 'repositories')
 
-      console.log(gh.toString())
+      console.log(gh.href)
     }
   ```
 
@@ -39,7 +39,7 @@ Further reading: [1](https://stackoverflow.com/questions/45516070)
 
           qs.set('tab', 'repositories')
 
-          window.alert(gh.toString())
+          window.alert(gh.href)
         }
       </script>
     </head>
