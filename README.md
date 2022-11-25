@@ -56,7 +56,6 @@ The following methods are not implemented:
 * [URLSearchParams instance methods](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams#instance_methods)
   - [entries()](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/entries)
   - [forEach()](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/forEach)
-  - [sort()](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/sort)
 
 #### Legal
 

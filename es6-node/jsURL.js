@@ -111,7 +111,8 @@ class URL {
 }
 
 class URLSearchParams {
-  #_map = {}
+  #_map    = {}
+  #_sorted = false
 
   constructor(search) {
     this.#_map = {}
@@ -177,15 +178,23 @@ class URLSearchParams {
     }
   }
 
+  sort(sorted = true) {
+    this.#_sorted = !!sorted
+  }
+
   keys() {
-    return Object.keys(this.#_map)
+    const keys = Object.keys(this.#_map)
+    if (this.#_sorted) keys.sort()
+    return keys
   }
 
   toString(exclude_question_mark) {
     let search = ''
     const keys = this.keys()
     keys.forEach(key => {
-      const vals = this.#_map[key]
+      const vals = this.#_sorted
+        ? [...this.#_map[key]].sort()
+        : this.#_map[key]
       vals.forEach(val => {
         let prefix = search ? '&' : exclude_question_mark ? '' : '?'
         search += `${prefix}${key}=${val}`
