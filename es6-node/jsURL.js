@@ -202,6 +202,10 @@ class URLSearchParams {
     })
     return search
   }
+
+  toJSON() {
+    return this.toString()
+  }
 }
 
 try {
