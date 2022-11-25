@@ -188,17 +188,26 @@ class URLSearchParams {
     return keys
   }
 
-  toString(exclude_question_mark) {
-    let search = ''
+  entries() {
+    const denormalized = []
     const keys = this.keys()
     keys.forEach(key => {
       const vals = this.#_sorted
         ? [...this.#_map[key]].sort()
         : this.#_map[key]
       vals.forEach(val => {
-        let prefix = search ? '&' : exclude_question_mark ? '' : '?'
-        search += `${prefix}${key}=${val}`
+        denormalized.push([key, val])
       })
+    })
+    return denormalized
+  }
+
+  toString(exclude_question_mark) {
+    let search = ''
+    const denormalized = this.entries()
+    denormalized.forEach(([key, val]) => {
+      let prefix = search ? '&' : exclude_question_mark ? '' : '?'
+      search += `${prefix}${key}=${val}`
     })
     return search
   }

@@ -54,7 +54,6 @@ The following methods are not implemented:
   - [createObjectURL()](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL)
   - [revokeObjectURL()](https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL)
 * [URLSearchParams instance methods](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams#instance_methods)
-  - [entries()](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/entries)
   - [forEach()](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/forEach)
 
 #### Legal
