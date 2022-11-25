@@ -53,8 +53,6 @@ The following methods are not implemented:
 * [URL static methods](https://developer.mozilla.org/en-US/docs/Web/API/URL#static_methods)
   - [createObjectURL()](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL)
   - [revokeObjectURL()](https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL)
-* [URLSearchParams instance methods](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams#instance_methods)
-  - [forEach()](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/forEach)
 
 #### Legal
 

@@ -202,6 +202,13 @@ class URLSearchParams {
     return denormalized
   }
 
+  forEach(callback, thisArg) {
+    const denormalized = this.entries()
+    denormalized.forEach(([key, val]) => {
+      callback.apply(thisArg, [val, key, this])
+    })
+  }
+
   toString(exclude_question_mark) {
     let search = ''
     const denormalized = this.entries()
