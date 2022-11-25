@@ -188,6 +188,15 @@ class URLSearchParams {
     return keys
   }
 
+  values() {
+    const values = []
+    for (const key in this.#_map) {
+      values.push(...this.#_map[key])
+    }
+    if (this.#_sorted) values.sort()
+    return values
+  }
+
   entries() {
     const denormalized = []
     const keys = this.keys()
