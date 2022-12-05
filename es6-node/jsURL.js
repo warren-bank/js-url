@@ -108,6 +108,29 @@ class URL {
   get searchParams() {
     return this.#_searchParams
   }
+
+  // ===================
+  // additional methods:
+  // ===================
+
+  parse(parseQueryString = false) {
+    return {
+      slashes:  true,
+      href:     this.href,
+      protocol: this.protocol,
+      username: this.username,
+      password: this.password,
+      auth:     `${this.username ? (this.password ? `${this.username}:${this.password}` : `${this.username}`) : ''}`,
+      hostname: this.hostname,
+      port:     this.port,
+      host:     this.host,
+      pathname: this.pathname,
+      search:   this.search,
+      path:     `${this.pathname}${this.search}`,
+      query:    (parseQueryString ? this.searchParams.parse() : this.searchParams.toString(/* exclude_question_mark= */ true)),
+      hash:     this.hash
+    }
+  }
 }
 
 class URLSearchParams {
@@ -218,7 +241,7 @@ class URLSearchParams {
     })
   }
 
-  toString(exclude_question_mark) {
+  toString(exclude_question_mark = false) {
     let search = ''
     const denormalized = this.entries()
     denormalized.forEach(([key, val]) => {
@@ -231,16 +254,32 @@ class URLSearchParams {
   toJSON() {
     return this.toString()
   }
+
+  // ===================
+  // additional methods:
+  // ===================
+
+  parse() {
+    const map_clone = {}
+    for (const key in this.#_map) {
+      map_clone[key] = [...this.#_map[key]]
+    }
+    return map_clone
+  }
+}
+
+const parse = (url, parseQueryString = false) => {
+  return (new URL(url)).parse(parseQueryString)
 }
 
 try {
   if (module instanceof Object)
-    module.exports = {URL, URLSearchParams}
+    module.exports = {URL, URLSearchParams, parse}
 }
 catch(e) {}
 
 try {
   if (window instanceof Object)
-    window.jsURL = URL
+    window.jsURL = {URL, URLSearchParams, parse}
 }
 catch(e) {}

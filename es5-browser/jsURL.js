@@ -199,6 +199,30 @@
       function get() {
         return _classPrivateFieldGet(this, _searchParams);
       }
+
+    }, {
+      key: "parse",
+      value:
+
+      function parse() {
+        var parseQueryString = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+        return {
+          slashes: true,
+          href: this.href,
+          protocol: this.protocol,
+          username: this.username,
+          password: this.password,
+          auth: "".concat(this.username ? this.password ? "".concat(this.username, ":").concat(this.password) : "".concat(this.username) : ''),
+          hostname: this.hostname,
+          port: this.port,
+          host: this.host,
+          pathname: this.pathname,
+          search: this.search,
+          path: "".concat(this.pathname).concat(this.search),
+          query: parseQueryString ? this.searchParams.parse() : this.searchParams.toString(true),
+          hash: this.hash
+        };
+      }
     }], [{
       key: "resolve",
       value: function resolve(url, base) {
@@ -338,7 +362,8 @@
       }
     }, {
       key: "toString",
-      value: function toString(exclude_question_mark) {
+      value: function toString() {
+        var exclude_question_mark = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
         var search = '';
         var denormalized = this.entries();
         denormalized.forEach(function (_ref3) {
@@ -355,17 +380,38 @@
       value: function toJSON() {
         return this.toString();
       }
+
+    }, {
+      key: "parse",
+      value:
+
+      function parse() {
+        var map_clone = {};
+        for (var key in _classPrivateFieldGet(this, _map)) {
+          map_clone[key] = _toConsumableArray(_classPrivateFieldGet(this, _map)[key]);
+        }
+        return map_clone;
+      }
     }]);
     return URLSearchParams;
   }();
+  var parse = function parse(url) {
+    var parseQueryString = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    return new URL(url).parse(parseQueryString);
+  };
   try {
     if (module instanceof Object) module.exports = {
       URL: URL,
-      URLSearchParams: URLSearchParams
+      URLSearchParams: URLSearchParams,
+      parse: parse
     };
   } catch (e) {}
   try {
-    if (window instanceof Object) window.jsURL = URL;
+    if (window instanceof Object) window.jsURL = {
+      URL: URL,
+      URLSearchParams: URLSearchParams,
+      parse: parse
+    };
   } catch (e) {}
 })();
 

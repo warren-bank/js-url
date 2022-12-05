@@ -12,15 +12,23 @@ Further reading: [1](https://stackoverflow.com/questions/45516070)
     npm install --save @warren-bank/url
   ```
   ```javascript
-    const {URL} = require('@warren-bank/url')
+    const {URL, parse} = require('@warren-bank/url')
 
     {
       const gh = new URL('https://github.com/warren-bank')
       const qs = gh.searchParams
 
+      gh.username = 'user'
+      gh.password = 'pass'
+      gh.port     = 443
+      gh.hash     = '#language-options'
+
       qs.set('tab', 'repositories')
 
-      console.log(gh.href)
+      console.log('URL.href = '         + gh.href)
+      console.log('parse(URL.href) = '  + JSON.stringify(parse(gh.href),  null, 2))
+      console.log('parse(URL) = '       + JSON.stringify(parse(gh),       null, 2))
+      console.log('parse(URL, true) = ' + JSON.stringify(parse(gh, true), null, 2))
     }
   ```
 
@@ -32,14 +40,22 @@ Further reading: [1](https://stackoverflow.com/questions/45516070)
       <script>
         {
           // temporarily override global URL class with external implementation within scope of block
-          const URL = window.jsURL
+          const {URL, parse} = window.jsURL
 
           const gh = new URL('https://github.com/warren-bank')
           const qs = gh.searchParams
 
+          gh.username = 'user'
+          gh.password = 'pass'
+          gh.port     = 443
+          gh.hash     = '#language-options'
+
           qs.set('tab', 'repositories')
 
-          window.alert(gh.href)
+          window.alert('URL.href = '         + gh.href)
+          window.alert('parse(URL.href) = '  + JSON.stringify(parse(gh.href),  null, 2))
+          window.alert('parse(URL) = '       + JSON.stringify(parse(gh),       null, 2))
+          window.alert('parse(URL, true) = ' + JSON.stringify(parse(gh, true), null, 2))
         }
       </script>
     </head>
