@@ -1,6 +1,6 @@
 {
   "name": "@warren-bank/url",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "main": "es6-node/jsURL.js",
   "browser": "es5-browser/jsURL.js",
   "description": "URL class library that does not perform any encoding or decoding",
@@ -34,6 +34,8 @@
   "keywords": [
     "URL",
     "URLSearchParams",
-    "searchParams"
+    "searchParams",
+    "url.parse",
+    "url.resolve"
   ]
 }

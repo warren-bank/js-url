@@ -399,18 +399,35 @@
     var parseQueryString = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     return new URL(url).parse(parseQueryString);
   };
+  var resolve = function resolve(base, url) {
+    var placeholder = {
+      protocol: 'resolve:',
+      hostname: 'resolve.domain',
+      pathname: '/'
+    };
+    var resolvedURL = new URL(url, new URL(base, "".concat(placeholder.protocol, "//").concat(placeholder.hostname).concat(placeholder.pathname)));
+    url = resolvedURL.toString();
+    if (resolvedURL.protocol === placeholder.protocol) {
+      var prefix = "".concat(placeholder.protocol, "//");
+      if (resolvedURL.hostname === placeholder.hostname) prefix += placeholder.hostname;
+      url = url.substring(prefix.length);
+    }
+    return url;
+  };
   try {
     if (module instanceof Object) module.exports = {
       URL: URL,
       URLSearchParams: URLSearchParams,
-      parse: parse
+      parse: parse,
+      resolve: resolve
     };
   } catch (e) {}
   try {
     if (window instanceof Object) window.jsURL = {
       URL: URL,
       URLSearchParams: URLSearchParams,
-      parse: parse
+      parse: parse,
+      resolve: resolve
     };
   } catch (e) {}
 })();

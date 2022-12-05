@@ -272,14 +272,37 @@ const parse = (url, parseQueryString = false) => {
   return (new URL(url)).parse(parseQueryString)
 }
 
+const resolve = (base, url) => {
+  const placeholder = {
+    protocol: 'resolve:',
+    hostname: 'resolve.domain',
+    pathname: '/'
+  }
+
+  const resolvedURL = new URL(url, new URL(base, `${placeholder.protocol}//${placeholder.hostname}${placeholder.pathname}`))
+
+  url = resolvedURL.toString()
+
+  if (resolvedURL.protocol === placeholder.protocol) {
+    let prefix = `${placeholder.protocol}//`
+
+    if (resolvedURL.hostname === placeholder.hostname)
+      prefix += placeholder.hostname
+
+    url = url.substring(prefix.length)
+  }
+
+  return url
+}
+
 try {
   if (module instanceof Object)
-    module.exports = {URL, URLSearchParams, parse}
+    module.exports = {URL, URLSearchParams, parse, resolve}
 }
 catch(e) {}
 
 try {
   if (window instanceof Object)
-    window.jsURL = {URL, URLSearchParams, parse}
+    window.jsURL = {URL, URLSearchParams, parse, resolve}
 }
 catch(e) {}
