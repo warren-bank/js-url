@@ -30,6 +30,13 @@ const test = (url_1, base, expected) => {
   }
 }
 
+test('//localhost')
+test('//user@localhost')
+test('//user:pass@localhost')
+test('//localhost?foo=bar')
+test('ftp://localhost')
+test('ftp://user:pass@localhost?foo=bar')
+
 test('http://www.example.com/')
 test('http://www.example.com/path/to/myfile')
 test('http://www.example.com:8080/path/to/myfile')

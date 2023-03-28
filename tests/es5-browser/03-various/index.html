@@ -1,0 +1,111 @@
+<html>
+<head>
+  <script src="../../../es5-browser/jsURL.js"></script>
+  <script>
+    {
+      // temporarily override global URL class with external implementation within scope of block
+      const {URL} = window.jsURL
+
+      // polyfill
+      const assert = {
+        equal: (a, b) => {
+          if (a !== b) throw new Error('assertion failed: parameters are not equal')
+        }
+      }
+
+      let errors_counter = 0
+
+      const test = (url_1, base, expected) => {
+        try {
+          const url_2 = URL.resolve(url_1, base)
+
+          const URL_1 = new URL(url_1, base)
+          const URL_2 = new URL(url_2)
+
+          assert.equal(url_2, URL_1.href)
+          assert.equal(url_2, URL_2.href)
+
+          if (!base)
+            assert.equal(url_1, url_2)
+          else if (url_1.indexOf('://') === -1)
+            assert.equal(
+              url_2.lastIndexOf(url_1),
+              (url_2.length - url_1.length)
+            )
+
+          if (expected)
+            assert.equal(expected, URL_1.href)
+        }
+        catch(e) {
+          console.log(`FAIL: ${JSON.stringify({url: url_1, base}, null, 2)}`)
+          errors_counter++
+        }
+      }
+
+      test('//localhost')
+      test('//user@localhost')
+      test('//user:pass@localhost')
+      test('//localhost?foo=bar')
+      test('ftp://localhost')
+      test('ftp://user:pass@localhost?foo=bar')
+
+      test('http://www.example.com/')
+      test('http://www.example.com/path/to/myfile')
+      test('http://www.example.com:8080/path/to/myfile')
+      test('http://myusername@www.example.com:8080/path/to/myfile')
+      test('http://myusername:mypassword@www.example.com:8080/path/to/myfile')
+      test('http://myusername:mypassword@www.example.com:8080/path/to/myfile?a=1&b=2&c=3')
+      test('http://myusername:mypassword@www.example.com:8080/path/to/myfile?a=1&b=2&c[]=3&c[]=4')
+      test('http://myusername:mypassword@www.example.com:8080/path/to/myfile?a=1&b=2&c[]=3&c[]=4#myhash')
+
+      {
+        const base = 'http://myusername:mypassword@www.example.com:8080/path/to/myfile?a=1&b=2&c[]=3&c[]=4#myhash'
+
+        const test_rel = (url, expected) => {
+          test(url, base, expected)
+        }
+
+        test_rel('')
+        test_rel('//www.example2.com/')
+        test_rel('/')
+        test_rel('/path2/to/myfile2')
+        test_rel('myfile2')
+        test_rel('myfile2?x=1&y=2&z[]=3&z[]=4')
+        test_rel('myfile2?x=1&y=2&z[]=3&z[]=4#hash2')
+        test_rel('/path2/to/myfile2?x=1&y=2&z[]=3&z[]=4#hash2')
+        test_rel('//www.example2.com/path2/to/myfile2?x=1&y=2&z[]=3&z[]=4#hash2')
+        test_rel('https://www.example2.com/path2/to/myfile2?x=1&y=2&z[]=3&z[]=4#hash2')
+      }
+
+      {
+        const base = 'http://myusername:mypassword@www.example.com:8080/path/to/myfile?a=1&b=2&c[]=3&c[]=4#myhash'
+
+        const get_baseURL = () => new URL(base)
+
+        const test_rel = (url, expected) => {
+          test(url, base, expected)
+        }
+
+        let val, expectedURL
+
+        val = '?x=1&y=2&z[]=3&z[]=4'
+        expectedURL = get_baseURL(); expectedURL.hash = ''; expectedURL.search = val;
+        test_rel(val, expectedURL.href)
+
+        val = '#hash2'
+        expectedURL = get_baseURL(); expectedURL.hash = val;
+        test_rel(val, expectedURL.href)
+      }
+
+      if (!errors_counter)
+        console.log('SUCCESS: all tests passed')
+
+      window.alert(
+        (!errors_counter)
+          ? 'SUCCESS: all tests passed'
+          : 'FAIL: not all tests passed'
+      )
+    }
+  </script>
+</head>
+</html>
