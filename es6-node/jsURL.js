@@ -1,5 +1,5 @@
 const regexs = {
-  url:  new RegExp('^([^/:]+:)?(?://(?:([^/:@]+):?([^/:@]+)?@)?([^:/\\?#]+)(?::(\\d+))?)?(/[^\\?#]*)?(\\?[^#]*)?(#.*)?$'),
+  url:  new RegExp('^([^/:]+:)?(?://(?:([^/:@]+):?([^/:@]+)?@)?([^:/\\?#]+)(?::(\\d+))?)?(/[^\\?#]*|[^\\?#]+)?(\\?[^#]*)?(#.*)?$'),
   host: /^([^:]+)(?::(\d+))?$/
 }
 
@@ -19,9 +19,13 @@ class URL {
 
     const fields = ['protocol', 'username', 'password', 'hostname', 'port', 'pathname', 'search', 'hash']
 
-    // process fields in order to copy missing values, and stop when the first populated field is encountered
+    // copy missing fields in order, and stop when the 1st populated field is encountered.
+    // when the 1st populated field is pathname, do the equivalent to: path.join(base_pathname, url_pathname)
     for (let i=0; i < fields.length; i++) {
       let field = fields[i]
+
+      if ((field === 'pathname') && dstURL[field] && srcURL[field] && (dstURL[field][0] !== '/'))
+        dstURL[field] = srcURL[field].replace(/[^\/]*$/, '') + dstURL[field]
       if (dstURL[field])
         break
       if (srcURL[field])
@@ -250,14 +254,7 @@ const parse = (url, parseQueryString = false) => {
   return (new URL(url)).parse(parseQueryString)
 }
 
-const resolve = (base, url) => {
-  try {
-    return URL.resolve(url, base)
-  }
-  catch(e) {
-    return ''
-  }
-}
+const resolve = (base, url) => URL.resolve(url, base)
 
 try {
   if (module instanceof Object)

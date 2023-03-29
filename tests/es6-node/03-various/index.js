@@ -18,7 +18,7 @@ const assert_equality = (a, b) => {
   }
 }
 
-const test = (url, base) => {
+const test_URL_constructor = (url, base) => {
   let url_real, url_test
 
   try {
@@ -42,34 +42,36 @@ const test = (url, base) => {
   assert_equality(url_real, url_test)
 }
 
-test('/path/to/myfile')
-test('//localhost')
-test('//localhost/path/to/myfile')
-test('//user@localhost')
-test('//user:pass@localhost')
-test('//localhost?foo=bar')
-test('//localhost#baz')
-test('ftp://localhost')
-test('ftp://user:pass@localhost?foo=bar#baz')
-test('ftp://user:pass@localhost/path/to/myfile?foo=bar#baz')
+const test_URL_constructor_with_one_parameter = test_URL_constructor
 
-test('http://www.example.com/')
-test('http://www.example.com/path/to/myfile')
-test('http://www.example.com:8080/path/to/myfile')
-test('http://myusername@www.example.com:8080/path/to/myfile')
-test('http://myusername:mypassword@www.example.com:8080/path/to/myfile')
-test('http://myusername:mypassword@www.example.com:8080/path/to/myfile?a=1&b=2&c=3')
-test('http://myusername:mypassword@www.example.com:8080/path/to/myfile?a=1&b=2&c[]=3&c[]=4')
-test('http://myusername:mypassword@www.example.com:8080/path/to/myfile?a=1&b=2&c[]=3&c[]=4#myhash')
+const default_base_URL = 'http://myusername:mypassword@www.example.com:8080/path/to/myfile?a=1&b=2&c[]=3&c[]=4#myhash'
+const test_URL_constructor_with_two_parameters = (url) => test_URL_constructor(url, default_base_URL)
 
-{
-  const base = 'http://myusername:mypassword@www.example.com:8080/path/to/myfile?a=1&b=2&c[]=3&c[]=4#myhash'
+test_URL_constructor_with_one_parameter('/path/to/myfile')
+test_URL_constructor_with_one_parameter('//localhost')
+test_URL_constructor_with_one_parameter('//localhost/path/to/myfile')
+test_URL_constructor_with_one_parameter('//user@localhost')
+test_URL_constructor_with_one_parameter('//user:pass@localhost')
+test_URL_constructor_with_one_parameter('//localhost?foo=bar')
+test_URL_constructor_with_one_parameter('//localhost#baz')
+test_URL_constructor_with_one_parameter('ftp://localhost')
+test_URL_constructor_with_one_parameter('ftp://user:pass@localhost?foo=bar#baz')
+test_URL_constructor_with_one_parameter('ftp://user:pass@localhost/path/to/myfile?foo=bar#baz')
 
-  const test_rel = (url) => test(url, base)
+test_URL_constructor_with_one_parameter('http://www.example.com/')
+test_URL_constructor_with_one_parameter('http://www.example.com/path/to/myfile')
+test_URL_constructor_with_one_parameter('http://www.example.com:8080/path/to/myfile')
+test_URL_constructor_with_one_parameter('http://myusername@www.example.com:8080/path/to/myfile')
+test_URL_constructor_with_one_parameter('http://myusername:mypassword@www.example.com:8080/path/to/myfile')
+test_URL_constructor_with_one_parameter('http://myusername:mypassword@www.example.com:8080/path/to/myfile?a=1&b=2&c=3')
+test_URL_constructor_with_one_parameter('http://myusername:mypassword@www.example.com:8080/path/to/myfile?a=1&b=2&c[]=3&c[]=4')
+test_URL_constructor_with_one_parameter('http://myusername:mypassword@www.example.com:8080/path/to/myfile?a=1&b=2&c[]=3&c[]=4#myhash')
 
-  test_rel('?x=1&y=2&z[]=3&z[]=4')
-  test_rel('#hash2')
-}
+test_URL_constructor_with_two_parameters('/path/to/my_other_file')
+test_URL_constructor_with_two_parameters('my_other_file')
+test_URL_constructor_with_two_parameters('?x=1&y=2&z[]=3&z[]=4')
+test_URL_constructor_with_two_parameters('#hash2')
+test_URL_constructor_with_two_parameters('my_other_file?x=1&y=2&z[]=3&z[]=4#hash2')
 
 if (!errors_counter)
   console.log('SUCCESS: all tests passed')

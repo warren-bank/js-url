@@ -125,7 +125,7 @@
     return descriptor.value;
   }
   var regexs = {
-    url: new RegExp('^([^/:]+:)?(?://(?:([^/:@]+):?([^/:@]+)?@)?([^:/\\?#]+)(?::(\\d+))?)?(/[^\\?#]*)?(\\?[^#]*)?(#.*)?$'),
+    url: new RegExp('^([^/:]+:)?(?://(?:([^/:@]+):?([^/:@]+)?@)?([^:/\\?#]+)(?::(\\d+))?)?(/[^\\?#]*|[^\\?#]+)?(\\?[^#]*)?(#.*)?$'),
     host: /^([^:]+)(?::(\d+))?$/
   };
   var _searchParams = new WeakMap();
@@ -232,6 +232,7 @@
 
         for (var i = 0; i < fields.length; i++) {
           var field = fields[i];
+          if (field === 'pathname' && dstURL[field] && srcURL[field] && dstURL[field][0] !== '/') dstURL[field] = srcURL[field].replace(/[^\/]*$/, '') + dstURL[field];
           if (dstURL[field]) break;
           if (srcURL[field]) dstURL[field] = srcURL[field];
         }
@@ -398,11 +399,7 @@
     return new URL(url).parse(parseQueryString);
   };
   var resolve = function resolve(base, url) {
-    try {
-      return URL.resolve(url, base);
-    } catch (e) {
-      return '';
-    }
+    return URL.resolve(url, base);
   };
   try {
     if (module instanceof Object) module.exports = {
