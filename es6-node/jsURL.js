@@ -1,5 +1,5 @@
 const regexs = {
-  url:  new RegExp('^([^/:]+:)?//(?:([^/:@]+):?([^/:@]+)?@)?([^:/\\?#]+)(?::(\\d+))?(/[^\\?#]*)?(\\?[^#]*)?(#.*)?$'),
+  url:  new RegExp('^([^/:]+:)?(?://(?:([^/:@]+):?([^/:@]+)?@)?([^:/\\?#]+)(?::(\\d+))?)?(/[^\\?#]*)?(\\?[^#]*)?(#.*)?$'),
   host: /^([^:]+)(?::(\d+))?$/
 }
 
@@ -14,47 +14,25 @@ class URL {
   }
 
   static resolve(url, base) {
-    let baseURL
+    const srcURL = new URL(base)
+    const dstURL = new URL(url)
 
-    try {
-      new URL(url)
-      // url is valid
-      return url
-    }
-    catch(e) {}
+    const fields = ['protocol', 'username', 'password', 'hostname', 'port', 'pathname', 'search', 'hash']
 
-    try {
-      baseURL = new URL(base)
-    }
-    catch(e) {
-      // base is not valid
-      return null
+    // process fields in order to copy missing values, and stop when the first populated field is encountered
+    for (let i=0; i < fields.length; i++) {
+      let field = fields[i]
+      if (dstURL[field])
+        break
+      if (srcURL[field])
+        dstURL[field] = srcURL[field]
     }
 
-    // url is not absolute, base is valid:
-    // resolve url relative to base
-
-    if (!url)
-      return base
-
-    else if (url.substring(0, 2) === '//')
-      return `${baseURL.protocol}${url}`
-
-    else if (url.substring(0, 1) === '/')
-      return `${baseURL.protocol}//${baseURL.username ? (baseURL.password ? `${baseURL.username}:${baseURL.password}@` : `${baseURL.username}@`) : ''}${baseURL.host}${url}`
-
-    else if (url.substring(0, 1) === '?')
-      return `${baseURL.protocol}//${baseURL.username ? (baseURL.password ? `${baseURL.username}:${baseURL.password}@` : `${baseURL.username}@`) : ''}${baseURL.host}${baseURL.pathname}${url}`
-
-    else if (url.substring(0, 1) === '#')
-      return `${baseURL.protocol}//${baseURL.username ? (baseURL.password ? `${baseURL.username}:${baseURL.password}@` : `${baseURL.username}@`) : ''}${baseURL.host}${baseURL.pathname}${baseURL.search}${url}`
-
-    else
-      return `${baseURL.protocol}//${baseURL.username ? (baseURL.password ? `${baseURL.username}:${baseURL.password}@` : `${baseURL.username}@`) : ''}${baseURL.host}${baseURL.pathname.replace(/[^\/]+$/, '')}${url}`
+    return dstURL.toString()
   }
 
   toString() {
-    return `${this.protocol}//${this.username ? (this.password ? `${this.username}:${this.password}@` : `${this.username}@`) : ''}${this.host}${this.pathname}${this.search}${this.hash}`
+    return `${this.protocol}${this.host ? `//${this.username ? (this.password ? `${this.username}:${this.password}@` : `${this.username}@`) : ''}${this.host}` : ''}${this.pathname}${this.search}${this.hash}`
   }
 
   toJSON() {
@@ -273,26 +251,12 @@ const parse = (url, parseQueryString = false) => {
 }
 
 const resolve = (base, url) => {
-  const placeholder = {
-    protocol: 'resolve:',
-    hostname: 'resolve.domain',
-    pathname: '/'
+  try {
+    return URL.resolve(url, base)
   }
-
-  const resolvedURL = new URL(url, new URL(base, `${placeholder.protocol}//${placeholder.hostname}${placeholder.pathname}`))
-
-  url = resolvedURL.toString()
-
-  if (resolvedURL.protocol === placeholder.protocol) {
-    let prefix = `${placeholder.protocol}//`
-
-    if (resolvedURL.hostname === placeholder.hostname)
-      prefix += placeholder.hostname
-
-    url = url.substring(prefix.length)
+  catch(e) {
+    return ''
   }
-
-  return url
 }
 
 try {

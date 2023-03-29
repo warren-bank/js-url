@@ -125,7 +125,7 @@
     return descriptor.value;
   }
   var regexs = {
-    url: new RegExp('^([^/:]+:)?//(?:([^/:@]+):?([^/:@]+)?@)?([^:/\\?#]+)(?::(\\d+))?(/[^\\?#]*)?(\\?[^#]*)?(#.*)?$'),
+    url: new RegExp('^([^/:]+:)?(?://(?:([^/:@]+):?([^/:@]+)?@)?([^:/\\?#]+)(?::(\\d+))?)?(/[^\\?#]*)?(\\?[^#]*)?(#.*)?$'),
     host: /^([^:]+)(?::(\d+))?$/
   };
   var _searchParams = new WeakMap();
@@ -142,7 +142,7 @@
     _createClass(URL, [{
       key: "toString",
       value: function toString() {
-        return "".concat(this.protocol, "//").concat(this.username ? this.password ? "".concat(this.username, ":").concat(this.password, "@") : "".concat(this.username, "@") : '').concat(this.host).concat(this.pathname).concat(this.search).concat(this.hash);
+        return "".concat(this.protocol).concat(this.host ? "//".concat(this.username ? this.password ? "".concat(this.username, ":").concat(this.password, "@") : "".concat(this.username, "@") : '').concat(this.host) : '').concat(this.pathname).concat(this.search).concat(this.hash);
       }
     }, {
       key: "toJSON",
@@ -226,18 +226,16 @@
     }], [{
       key: "resolve",
       value: function resolve(url, base) {
-        var baseURL;
-        try {
-          new URL(url);
-          return url;
-        } catch (e) {}
-        try {
-          baseURL = new URL(base);
-        } catch (e) {
-          return null;
-        }
+        var srcURL = new URL(base);
+        var dstURL = new URL(url);
+        var fields = ['protocol', 'username', 'password', 'hostname', 'port', 'pathname', 'search', 'hash'];
 
-        if (!url) return base;else if (url.substring(0, 2) === '//') return "".concat(baseURL.protocol).concat(url);else if (url.substring(0, 1) === '/') return "".concat(baseURL.protocol, "//").concat(baseURL.username ? baseURL.password ? "".concat(baseURL.username, ":").concat(baseURL.password, "@") : "".concat(baseURL.username, "@") : '').concat(baseURL.host).concat(url);else if (url.substring(0, 1) === '?') return "".concat(baseURL.protocol, "//").concat(baseURL.username ? baseURL.password ? "".concat(baseURL.username, ":").concat(baseURL.password, "@") : "".concat(baseURL.username, "@") : '').concat(baseURL.host).concat(baseURL.pathname).concat(url);else if (url.substring(0, 1) === '#') return "".concat(baseURL.protocol, "//").concat(baseURL.username ? baseURL.password ? "".concat(baseURL.username, ":").concat(baseURL.password, "@") : "".concat(baseURL.username, "@") : '').concat(baseURL.host).concat(baseURL.pathname).concat(baseURL.search).concat(url);else return "".concat(baseURL.protocol, "//").concat(baseURL.username ? baseURL.password ? "".concat(baseURL.username, ":").concat(baseURL.password, "@") : "".concat(baseURL.username, "@") : '').concat(baseURL.host).concat(baseURL.pathname.replace(/[^\/]+$/, '')).concat(url);
+        for (var i = 0; i < fields.length; i++) {
+          var field = fields[i];
+          if (dstURL[field]) break;
+          if (srcURL[field]) dstURL[field] = srcURL[field];
+        }
+        return dstURL.toString();
       }
     }]);
     return URL;
@@ -400,19 +398,11 @@
     return new URL(url).parse(parseQueryString);
   };
   var resolve = function resolve(base, url) {
-    var placeholder = {
-      protocol: 'resolve:',
-      hostname: 'resolve.domain',
-      pathname: '/'
-    };
-    var resolvedURL = new URL(url, new URL(base, "".concat(placeholder.protocol, "//").concat(placeholder.hostname).concat(placeholder.pathname)));
-    url = resolvedURL.toString();
-    if (resolvedURL.protocol === placeholder.protocol) {
-      var prefix = "".concat(placeholder.protocol, "//");
-      if (resolvedURL.hostname === placeholder.hostname) prefix += placeholder.hostname;
-      url = url.substring(prefix.length);
+    try {
+      return URL.resolve(url, base);
+    } catch (e) {
+      return '';
     }
-    return url;
   };
   try {
     if (module instanceof Object) module.exports = {

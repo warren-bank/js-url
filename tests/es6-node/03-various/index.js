@@ -42,13 +42,16 @@ const test = (url, base) => {
   assert_equality(url_real, url_test)
 }
 
+test('/path/to/myfile')
 test('//localhost')
+test('//localhost/path/to/myfile')
 test('//user@localhost')
 test('//user:pass@localhost')
 test('//localhost?foo=bar')
 test('//localhost#baz')
 test('ftp://localhost')
 test('ftp://user:pass@localhost?foo=bar#baz')
+test('ftp://user:pass@localhost/path/to/myfile?foo=bar#baz')
 
 test('http://www.example.com/')
 test('http://www.example.com/path/to/myfile')
