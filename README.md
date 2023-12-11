@@ -70,6 +70,23 @@ The following methods are not implemented:
   - [createObjectURL()](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL)
   - [revokeObjectURL()](https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL)
 
+- - - -
+
+#### Requirements:
+
+* release version: [`v2.0.0`](https://github.com/warren-bank/js-url/releases/tag/v2.0.0) (and lower)
+  * Node.js version: v6.4.0 (and higher)
+    * [ES6 support](http://node.green/)
+      * v0.10.48+: [const](https://node.green/#ES2015-bindings-const)
+      * v4.09.01+: [arrow functions](https://node.green/#ES2015-functions-arrow-functions)
+      * v5.12.00+: [spread syntax for iterable objects](https://node.green/#ES2015-syntax-spread-syntax-for-iterable-objects)
+      * v6.04.00+: [let](https://node.green/#ES2015-bindings-let)
+      * v6.04.00+: [class statement with static methods](https://node.green/#ES2015-functions-class)
+* release version: [`v2.0.1`](https://github.com/warren-bank/js-url/releases/tag/v2.0.1) (and higher)
+  * Node.js version: v12.0.0 (and higher)
+    * [ES6 support](http://node.green/)
+      * v12.00.00+: [private instance class fields](https://node.green/#ES2022-features-instance-class-fields)
+
 #### Legal
 
 * copyright: [Warren Bank](https://github.com/warren-bank)
