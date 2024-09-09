@@ -414,9 +414,11 @@
     var url = new URL('');
     for (var _i2 = 0, _arr2 = ['protocol', 'username', 'password', 'host', 'hostname', 'port', 'pathname', 'search', 'hash']; _i2 < _arr2.length; _i2++) {
       var key = _arr2[_i2];
-      if (urlObject[key]) {
-        if (typeof urlObject[key] !== 'string') throw new Error("Error: \"".concat(key, "\" must be a String."));
-        url[key] = urlObject[key];
+      var val = urlObject[key];
+      if (key === 'port' && typeof val === 'number') val = String(val);
+      if (val) {
+        if (typeof val !== 'string') throw new Error("Error: \"".concat(key, "\" must be a String."));
+        url[key] = val;
       }
     }
     if (urlObject.auth) {

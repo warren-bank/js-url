@@ -57,6 +57,50 @@ Further reading: [1](https://stackoverflow.com/questions/45516070)
           window.alert('parse(URL) = '       + JSON.stringify(parse(gh),       null, 2))
           window.alert('parse(URL, true) = ' + JSON.stringify(parse(gh, true), null, 2))
         }
+
+        {
+          const {parse, format} = window.jsURL
+
+          const run_test_1 = () => {
+            const url_1 = format({
+              protocol: 'https:',
+              hostname: 'example.com',
+              port: 80,
+              pathname: '/some/path',
+              search: 'page=1&format=json'
+            })
+
+            const url_2 = format({
+              protocol: 'https',
+              host: 'example.com:80',
+              pathname: 'some/path',
+              query: {
+                page: 1,
+                format: 'json'
+              }
+            })
+
+            const is_equal = (url_1 === url_2)
+
+            window.alert(
+              JSON.stringify({url_1, url_2, is_equal}, null, 2)
+            )
+          }
+
+          const run_test_2 = (url_1) => {
+            const urlObject = parse(url_1)
+            const url_2     = format(urlObject)
+
+            const is_equal = (url_1 === url_2)
+
+            window.alert(
+              JSON.stringify({url_1, url_2, is_equal}, null, 2)
+            )
+          }
+
+          run_test_1()
+          run_test_2('http://login:password@www.example.org:80/demo/example.cgi?lang=de&foo=bar#position')
+        }
       </script>
     </head>
     </html>

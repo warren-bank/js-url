@@ -267,11 +267,16 @@ const format = (urlObject) => {
   const url = new URL('')
 
   for (let key of ['protocol', 'username', 'password', 'host', 'hostname', 'port', 'pathname', 'search', 'hash']) {
-    if (urlObject[key]) {
-      if (typeof urlObject[key] !== 'string')
+    let val = urlObject[key]
+
+    if ((key === 'port') && (typeof val === 'number'))
+      val = String(val)
+
+    if (val) {
+      if (typeof val !== 'string')
         throw new Error(`Error: "${key}" must be a String.`)
 
-      url[key] = urlObject[key]
+      url[key] = val
     }
   }
 
