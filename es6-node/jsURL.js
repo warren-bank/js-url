@@ -254,16 +254,65 @@ const parse = (url, parseQueryString = false) => {
   return (new URL(url)).parse(parseQueryString)
 }
 
+const format = (urlObject) => {
+  if (typeof urlObject === 'string')
+    return urlObject
+
+  if (!urlObject || (typeof urlObject !== 'object'))
+    throw new Error('TypeError: parameter must either be an Object or a String.')
+
+  if (urlObject.href)
+    return urlObject.href
+
+  const url = new URL('')
+
+  for (let key of ['protocol', 'username', 'password', 'host', 'hostname', 'port', 'pathname', 'search', 'hash']) {
+    if (urlObject[key]) {
+      if (typeof urlObject[key] !== 'string')
+        throw new Error(`Error: "${key}" must be a String.`)
+
+      url[key] = urlObject[key]
+    }
+  }
+
+  if (urlObject.auth) {
+    if (typeof urlObject.auth !== 'string')
+      throw new Error('Error: "auth" must be a String.')
+
+    const parts = auth.split(':')
+    url.username = parts.shift()
+    if (parts.length > 1)
+      url.password = parts.join(':')
+  }
+
+  if (urlObject.query) {
+    if (typeof urlObject.query !== 'object')
+      throw new Error('Error: "query" must be an Object.')
+
+    for (let key in urlObject.query) {
+      url.searchParams.append(key, urlObject.query[key])
+    }
+  }
+
+  if (url.protocol && !url.protocol.endsWith(':'))
+    url.protocol = url.protocol + ':'
+
+  if (url.pathname && !url.pathname.startsWith('/'))
+    url.pathname = '/' + url.pathname
+
+  return url.toString()
+}
+
 const resolve = (base, url) => URL.resolve(url, base)
 
 try {
   if (module instanceof Object)
-    module.exports = {URL, URLSearchParams, parse, resolve}
+    module.exports = {URL, URLSearchParams, parse, format, resolve}
 }
 catch(e) {}
 
 try {
   if (window instanceof Object)
-    window.jsURL = {URL, URLSearchParams, parse, resolve}
+    window.jsURL = {URL, URLSearchParams, parse, format, resolve}
 }
 catch(e) {}

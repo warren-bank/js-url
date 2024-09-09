@@ -2,6 +2,15 @@
 (function () {
   "use strict";
 
+  function _typeof(obj) {
+    "@babel/helpers - typeof";
+
+    return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
+      return typeof obj;
+    } : function (obj) {
+      return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    }, _typeof(obj);
+  }
   function _slicedToArray(arr, i) {
     return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
   }
@@ -398,6 +407,34 @@
     var parseQueryString = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     return new URL(url).parse(parseQueryString);
   };
+  var format = function format(urlObject) {
+    if (typeof urlObject === 'string') return urlObject;
+    if (!urlObject || _typeof(urlObject) !== 'object') throw new Error('TypeError: parameter must either be an Object or a String.');
+    if (urlObject.href) return urlObject.href;
+    var url = new URL('');
+    for (var _i2 = 0, _arr2 = ['protocol', 'username', 'password', 'host', 'hostname', 'port', 'pathname', 'search', 'hash']; _i2 < _arr2.length; _i2++) {
+      var key = _arr2[_i2];
+      if (urlObject[key]) {
+        if (typeof urlObject[key] !== 'string') throw new Error("Error: \"".concat(key, "\" must be a String."));
+        url[key] = urlObject[key];
+      }
+    }
+    if (urlObject.auth) {
+      if (typeof urlObject.auth !== 'string') throw new Error('Error: "auth" must be a String.');
+      var parts = auth.split(':');
+      url.username = parts.shift();
+      if (parts.length > 1) url.password = parts.join(':');
+    }
+    if (urlObject.query) {
+      if (_typeof(urlObject.query) !== 'object') throw new Error('Error: "query" must be an Object.');
+      for (var _key in urlObject.query) {
+        url.searchParams.append(_key, urlObject.query[_key]);
+      }
+    }
+    if (url.protocol && !url.protocol.endsWith(':')) url.protocol = url.protocol + ':';
+    if (url.pathname && !url.pathname.startsWith('/')) url.pathname = '/' + url.pathname;
+    return url.toString();
+  };
   var resolve = function resolve(base, url) {
     return URL.resolve(url, base);
   };
@@ -406,6 +443,7 @@
       URL: URL,
       URLSearchParams: URLSearchParams,
       parse: parse,
+      format: format,
       resolve: resolve
     };
   } catch (e) {}
@@ -414,6 +452,7 @@
       URL: URL,
       URLSearchParams: URLSearchParams,
       parse: parse,
+      format: format,
       resolve: resolve
     };
   } catch (e) {}
